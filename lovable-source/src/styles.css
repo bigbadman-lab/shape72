@@ -1,0 +1,125 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * SHAPE72 design system.
+ *
+ * Palette is intentionally minimal (brand spec):
+ *   background   #080808
+ *   surface      #101010
+ *   orange       #FF5C00   (only strong accent)
+ *   text         #F4F4F2
+ *   muted text   #8B8B86
+ *   dividers     #202020
+ *
+ * Typography: "Mono Spec" is the brand typeface. It is not bundled yet,
+ * so the stack below falls back to JetBrains Mono (temporary, loaded in
+ * __root.tsx). When Mono Spec is supplied, add its @font-face and swap
+ * the first entry of --font-display — no component changes required.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-display: "Mono Spec", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+:root {
+  --radius: 1.25rem;
+  --background: #080808;
+  --foreground: #f4f4f2;
+  --card: #101010;
+  --card-foreground: #f4f4f2;
+  --popover: #101010;
+  --popover-foreground: #f4f4f2;
+  --primary: #ff5c00;
+  --primary-foreground: #080808;
+  --secondary: #101010;
+  --secondary-foreground: #f4f4f2;
+  --muted: #161616;
+  --muted-foreground: #8b8b86;
+  --accent: #161616;
+  --accent-foreground: #f4f4f2;
+  --destructive: #ff5c00;
+  --destructive-foreground: #080808;
+  --border: #202020;
+  --input: #202020;
+  --ring: #ff5c00;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+  }
+}
+
+/* Shape artwork: original SVG used as a stencil, painted in brand orange (files stay untouched). */
+.shape-mask {
+  position: absolute;
+  inset: 0;
+  background-color: var(--primary);
+  -webkit-mask: var(--shape-src) center / contain no-repeat;
+  mask: var(--shape-src) center / contain no-repeat;
+  pointer-events: none;
+}
+
+@keyframes reward-live {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: scale(0.82);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.reward-live-dot {
+  animation: reward-live 2.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reward-live-dot {
+    animation: none;
+  }
+}
