@@ -9,6 +9,7 @@ import { ShapeModal } from "@/components/ShapeModal";
 import { SecondaryMarketStrip } from "@/components/SecondaryMarketStrip";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { TokenStrip } from "@/components/TokenStrip";
+import { RemainingMintLabel } from "@/components/RemainingMintLabel";
 import { WalletControl } from "@/components/WalletControl";
 import { claimShape, type ShapeClaimPhase } from "@/lib/shape-claim";
 import { shortenAddress } from "@/lib/solana";
@@ -49,26 +50,35 @@ export function HomePage() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [claimPhase, setClaimPhase] = useState<ShapeClaimPhase>("idle");
   const [mintEnabled, setMintEnabled] = useState(false);
+  const [statusReady, setStatusReady] = useState(false);
   const { isConnected, address, connect, wallet } = useWallet();
 
   useEffect(() => {
     let cancelled = false;
-    void fetch("/api/shapes/status")
-      .then((response) => response.json())
-      .then((payload: { mintEnabled?: boolean; shapes?: StatusRow[] }) => {
-        if (cancelled) return;
-        setMintEnabled(payload.mintEnabled === true);
-        if (Array.isArray(payload.shapes)) {
-          setShapes((prev) => applyLiveStatus(prev, payload.shapes || [], address));
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setMintEnabled(false);
-      });
+    const load = () => {
+      void fetch("/api/shapes/status", { cache: "no-store" })
+        .then((response) => response.json())
+        .then((payload: { mintEnabled?: boolean; shapes?: StatusRow[] }) => {
+          if (cancelled) return;
+          setMintEnabled(payload.mintEnabled === true);
+          if (Array.isArray(payload.shapes)) {
+            setShapes((prev) => applyLiveStatus(prev, payload.shapes || [], address));
+            setStatusReady(true);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) setMintEnabled(false);
+        });
+    };
+    load();
+    const timer = window.setInterval(load, 10_000);
     return () => {
       cancelled = true;
+      window.clearInterval(timer);
     };
   }, [address]);
+
+  const remaining = shapes.filter((shape) => shape.status === "available").length;
 
   const selected = shapes.find((s) => s.id === selectedId) ?? null;
 
@@ -113,9 +123,7 @@ export function HomePage() {
       <AnnouncementBar />
       <div className="mx-auto max-w-[1180px] px-6 sm:px-10">
         <header className="flex items-center justify-between py-7">
-          <span className="font-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-            One of one · Solana
-          </span>
+          <RemainingMintLabel remaining={remaining} ready={statusReady} />
           <WalletControl />
         </header>
 

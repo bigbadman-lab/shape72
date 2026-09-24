@@ -51,12 +51,12 @@ export async function readProductionToken(): Promise<StoredToken> {
     headers: managementHeaders(),
     signal: AbortSignal.timeout(15_000),
   });
-  if (response.status === 404) return { ...INACTIVE_STORED };
+  if (response.status === 404 || response.status === 204) return { ...INACTIVE_STORED };
   if (!response.ok) {
     throw new Error(`BLOCKED — GLOBAL CONFIG READ FAILED (${response.status})`);
   }
-  const json = (await response.json()) as { item?: { value?: unknown } };
-  const value = json.item?.value;
+  const json = (await response.json()) as { item?: { value?: unknown }; value?: unknown };
+  const value = json.item?.value ?? json.value;
   if (!value || typeof value !== "object") return { ...INACTIVE_STORED };
   const row = value as StoredToken;
   if (row.active === true && typeof row.mint === "string" && row.mint) {

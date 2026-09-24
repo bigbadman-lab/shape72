@@ -5,7 +5,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import { SHAPE_MANIFEST } from "@/data/manifest";
 import { isSolanaAddress, shortenAddress } from "@/lib/solana";
 import { STATUS_CACHE_MS } from "@/server/constants";
-import { isPublicMintEnabled } from "@/server/env";
+import { isPublicMintEnabled } from "@/server/mint-runtime";
 import { createReadUmi } from "@/server/operator-umi";
 import { dedicatedRpcUrl } from "@/server/rpc";
 
@@ -30,7 +30,7 @@ export async function readShapeStatuses(): Promise<{
   shapes: PublicShapeStatus[];
 }> {
   if (cache && Date.now() - cache.at < STATUS_CACHE_MS) {
-    return { mintEnabled: isPublicMintEnabled(), shapes: cache.shapes };
+    return { mintEnabled: await isPublicMintEnabled(), shapes: cache.shapes };
   }
 
   const connection = new Connection(dedicatedRpcUrl(), "confirmed");
@@ -78,5 +78,5 @@ export async function readShapeStatuses(): Promise<{
   });
 
   cache = { at: Date.now(), shapes };
-  return { mintEnabled: isPublicMintEnabled(), shapes };
+  return { mintEnabled: await isPublicMintEnabled(), shapes };
 }

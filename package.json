@@ -27,7 +27,11 @@
     "signers:export-production": "tsx scripts/signers/export-production.ts",
     "signers:verify-production": "tsx scripts/signers/verify-production.ts",
     "signers:upload-vercel": "tsx scripts/signers/upload-vercel.ts",
-    "mint:rehearse-production": "tsx scripts/mint/rehearse-production.ts"
+    "mint:rehearse-production": "tsx scripts/mint/rehearse-production.ts",
+    "mint:verify": "tsx scripts/mint/verify.ts",
+    "mint:enable": "tsx scripts/mint/enable.ts",
+    "mint:disable": "tsx scripts/mint/disable.ts",
+    "mint:prove-runtime": "tsx scripts/mint/prove-runtime.ts"
   },
   "dependencies": {
     "@metaplex-foundation/mpl-core": "^1.10.0",

@@ -12,6 +12,6 @@ export function requireServerEnv(name: string): string {
   return value;
 }
 
-export function isPublicMintEnabled(): boolean {
+export function isLocalMintEnvEnabled(): boolean {
   return serverEnv("SHAPE72_PUBLIC_MINT_ENABLED") === "true";
 }

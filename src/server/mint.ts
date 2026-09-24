@@ -12,7 +12,8 @@ import { padShapeId } from "@/data/shapes";
 import { isSolanaAddress } from "@/lib/solana";
 import { loadPredeterminedAssetSigner } from "@/server/asset-signer";
 import { EXPECTED_COLLECTION, EXPECTED_OPERATOR } from "@/server/constants";
-import { isPublicMintEnabled, serverEnv } from "@/server/env";
+import { serverEnv } from "@/server/env";
+import { isPublicMintEnabled } from "@/server/mint-runtime";
 import { createOperatorUmi } from "@/server/operator-umi";
 import {
   COMPUTE_BUDGET_PROGRAM,
@@ -99,7 +100,7 @@ async function assembleShapeClaim(
     );
   }
 
-  if (options.requirePublicMint && !isPublicMintEnabled()) {
+  if (options.requirePublicMint && !(await isPublicMintEnabled())) {
     throw new ShapePrepareError(
       "MINT_DISABLED",
       "Public mint is not live",

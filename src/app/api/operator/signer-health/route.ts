@@ -1,4 +1,5 @@
 import { createReadUmi } from "@/server/operator-umi";
+import { isPublicMintEnabled } from "@/server/mint-runtime";
 import { inspectSignerHealth, signerBackend } from "@/server/signers";
 import { serverEnv } from "@/server/env";
 
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
       assetSignerCount: health.assetSignerCount,
       allManifestMatches: health.allManifestMatches,
       backend: signerBackend(),
-      mintEnabled: serverEnv("SHAPE72_PUBLIC_MINT_ENABLED") === "true",
+      mintEnabled: await isPublicMintEnabled(),
     });
   } catch {
     return Response.json({ error: "SIGNER_HEALTH_FAILED" }, { status: 500 });
