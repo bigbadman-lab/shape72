@@ -7,19 +7,25 @@ import {
   TOTAL_SHAPES,
   type Shape,
 } from "@/data/shapes";
+import { useWallet } from "@/components/AppKitProvider";
 import { Shape72Wordmark } from "@/components/Shape72Wordmark";
 import { ShapeGallery } from "@/components/ShapeGallery";
 import { ShapeModal } from "@/components/ShapeModal";
 import { TokenStrip } from "@/components/TokenStrip";
+import { WalletControl } from "@/components/WalletControl";
 
 export function HomePage() {
   const [shapes, setShapes] = useState<Shape[]>(SHAPES);
-  const [walletConnected, setWalletConnected] = useState(true);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const { isConnected, connect } = useWallet();
 
   const selected = shapes.find((s) => s.id === selectedId) ?? null;
 
   const claim = (id: number) => {
+    if (!isConnected) {
+      void connect();
+      return;
+    }
     setShapes((prev) =>
       prev.map((s) =>
         s.id === id
@@ -45,13 +51,7 @@ export function HomePage() {
           <span className="font-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
             One of one · Solana
           </span>
-          <button
-            type="button"
-            onClick={() => setWalletConnected((c) => !c)}
-            className="rounded-full border border-border bg-card px-5 py-2.5 font-display text-[10px] uppercase tracking-[0.25em] text-foreground transition-colors duration-200 hover:border-foreground/40"
-          >
-            {walletConnected ? MOCK_WALLET : "Connect"}
-          </button>
+          <WalletControl />
         </header>
 
         {/* Wordmark — custom vector lettering, spans the gallery width. */}
@@ -71,7 +71,7 @@ export function HomePage() {
 
         <ShapeGallery
           shapes={shapes}
-          walletConnected={walletConnected}
+          walletConnected
           onOpen={setSelectedId}
         />
 
@@ -84,7 +84,7 @@ export function HomePage() {
 
       <ShapeModal
         shape={selected}
-        walletConnected={walletConnected}
+        walletConnected
         onClose={() => setSelectedId(null)}
         onClaim={claim}
         onClaimRewards={claimRewards}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
+import { AppKitProvider } from "@/components/AppKitProvider";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -42,7 +43,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${jetbrainsMono.variable} h-full antialiased`}>
-      <body className="min-h-full font-display">{children}</body>
+      <body className="min-h-full font-display">
+        <AppKitProvider>{children}</AppKitProvider>
+      </body>
     </html>
   );
 }
