@@ -23,7 +23,11 @@
     "shapes:verify-marketplace-metadata": "tsx scripts/shapes/verify-marketplace-metadata.ts",
     "token:activate": "tsx scripts/token/activate.ts",
     "token:verify": "tsx scripts/token/verify.ts",
-    "token:rehearse": "tsx scripts/token/rehearse.ts"
+    "token:rehearse": "tsx scripts/token/rehearse.ts",
+    "signers:export-production": "tsx scripts/signers/export-production.ts",
+    "signers:verify-production": "tsx scripts/signers/verify-production.ts",
+    "signers:upload-vercel": "tsx scripts/signers/upload-vercel.ts",
+    "mint:rehearse-production": "tsx scripts/mint/rehearse-production.ts"
   },
   "dependencies": {
     "@metaplex-foundation/mpl-core": "^1.10.0",

@@ -74,6 +74,18 @@ export async function assetAccountExists(assetAddress: string): Promise<boolean>
 }
 
 export async function prepareShapeClaim(id: number, claimant: string) {
+  return assembleShapeClaim(id, claimant, { requirePublicMint: true });
+}
+
+export async function rehearseShapeClaim(id: number, claimant: string) {
+  return assembleShapeClaim(id, claimant, { requirePublicMint: false });
+}
+
+async function assembleShapeClaim(
+  id: number,
+  claimant: string,
+  options: { requirePublicMint: boolean },
+) {
   const entry = requireManifestEntry(id);
   if (!isSolanaAddress(entry.assetAddress)) {
     throw new ShapePrepareError("MANIFEST_INCOMPLETE", "Shape asset address is missing", 503);
@@ -87,7 +99,7 @@ export async function prepareShapeClaim(id: number, claimant: string) {
     );
   }
 
-  if (!isPublicMintEnabled()) {
+  if (options.requirePublicMint && !isPublicMintEnabled()) {
     throw new ShapePrepareError(
       "MINT_DISABLED",
       "Public mint is not live",
