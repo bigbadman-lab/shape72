@@ -13,11 +13,7 @@
  *   muted text   #8B8B86
  *   dividers     #202020
  *
- * Typography: "Mono Spec" is the brand typeface. It is not bundled yet,
- * so the stack below falls back to JetBrains Mono (temporary, loaded in
- * layout.tsx via next/font). When Mono Spec is supplied, add its
- * @font-face and swap the first entry of --font-display — no component
- * changes required.
+ * Typography: Courier Prime — typewriter mono, loaded in layout.tsx.
  */
 
 @theme inline {
@@ -47,8 +43,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --font-display: "Mono Spec", var(--font-jetbrains-mono), ui-monospace,
-    SFMono-Regular, Menlo, monospace;
+  --font-display: var(--font-courier-prime), "Courier New", Courier,
+    ui-monospace, monospace;
 }
 
 :root {
@@ -83,7 +79,10 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-display);
-    -webkit-font-smoothing: antialiased;
+    font-optical-sizing: none;
+    letter-spacing: 0.02em;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: unset;
   }
 
   ::selection {
