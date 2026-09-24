@@ -36,6 +36,14 @@ export function localSvgPath(id: number): string {
   return resolve(process.cwd(), "public/shapes", `shape-${id}.svg`);
 }
 
+export function marketplacePngDir(): string {
+  return resolve(process.cwd(), "public/shapes/marketplace");
+}
+
+export function marketplacePngPath(id: number): string {
+  return resolve(marketplacePngDir(), `shape-${padShapeId(id)}.png`);
+}
+
 export function localMetadataPath(id: number): string {
   return resolve(process.cwd(), "metadata/shapes", `shape-${padShapeId(id)}.json`);
 }

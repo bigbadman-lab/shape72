@@ -6,6 +6,7 @@ export type ShapeManifestEntry = {
   name: string;
   assetAddress: string;
   imageUri: string;
+  svgUri?: string;
   metadataUri: string;
 };
 

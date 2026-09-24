@@ -2,7 +2,7 @@
   "name": "SHAPE 72",
   "symbol": "SHAPE72",
   "description": "Shape 72 of 72. A 1/1 Genesis Shape from SHAPE72.",
-  "image": "ipfs://bafkreiernvcq7qvyfe5ps5r24j2dbo4sm4wyljaofxxceiyp3mhsgx456e",
+  "image": "ipfs://bafkreigyxtlc63pgfvfrle5bodykwmiatmtdfhoio2ulxp53u3o7jimguu",
   "attributes": [
     {
       "trait_type": "Shape",
@@ -18,7 +18,12 @@
     }
   ],
   "properties": {
+    "category": "image",
     "files": [
+      {
+        "uri": "ipfs://bafkreigyxtlc63pgfvfrle5bodykwmiatmtdfhoio2ulxp53u3o7jimguu",
+        "type": "image/png"
+      },
       {
         "uri": "ipfs://bafkreiernvcq7qvyfe5ps5r24j2dbo4sm4wyljaofxxceiyp3mhsgx456e",
         "type": "image/svg+xml"

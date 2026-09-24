@@ -6,6 +6,7 @@ import { useWallet } from "@/components/AppKitProvider";
 import { Shape72Wordmark } from "@/components/Shape72Wordmark";
 import { ShapeGallery } from "@/components/ShapeGallery";
 import { ShapeModal } from "@/components/ShapeModal";
+import { SecondaryMarketStrip } from "@/components/SecondaryMarketStrip";
 import { TokenStrip } from "@/components/TokenStrip";
 import { WalletControl } from "@/components/WalletControl";
 import { claimShape, type ShapeClaimPhase } from "@/lib/shape-claim";
@@ -129,6 +130,8 @@ export function HomePage() {
             </p>
           </div>
         </div>
+
+        <SecondaryMarketStrip />
 
         <ShapeGallery
           shapes={shapes}

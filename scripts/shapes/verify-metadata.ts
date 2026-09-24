@@ -8,6 +8,7 @@ type ManifestEntry = {
   id: number;
   name: string;
   imageUri: string;
+  svgUri?: string;
   metadataUri: string;
 };
 
@@ -56,7 +57,7 @@ async function pinataFile(cid: string): Promise<PinataFile | null> {
   if (!jwt) return null;
   const response = await fetch(
     `https://api.pinata.cloud/v3/files/public?cid=${encodeURIComponent(cid)}`,
-    { headers: { Authorization: `Bearer ${jwt}` } },
+    { headers: { Authorization: `Bearer ${jwt}` }, signal: AbortSignal.timeout(20_000) },
   );
   if (!response.ok) return null;
   const json = (await response.json()) as { data?: { files?: PinataFile[] } };
@@ -72,28 +73,28 @@ async function main() {
   const failures: string[] = [];
 
   for (const entry of manifest) {
+    const svgUri = entry.svgUri || "";
     const imageCid = cidFrom(entry.imageUri);
+    const svgCid = cidFrom(svgUri);
     const metadataCid = cidFrom(entry.metadataUri);
     const local = readFileSync(localSvgPath(entry.id));
-    const imageCidMatch = Boolean(imageCid && cidV1Raw(local) === imageCid);
+    const imageCidMatch = Boolean(svgCid && cidV1Raw(local) === svgCid);
     const hostedImage = imageCid ? await pinataFile(imageCid) : null;
+    const hostedSvg = svgCid ? await pinataFile(svgCid) : null;
     const imageValid = Boolean(
-      imageCidMatch &&
-        hostedImage &&
-        hostedImage.cid === imageCid &&
-        hostedImage.mime_type === "image/svg+xml" &&
-        hostedImage.size === local.length,
+      imageCid &&
+        hostedImage?.mime_type === "image/png" &&
+        imageCidMatch &&
+        hostedSvg?.mime_type === "image/svg+xml",
     );
 
-    const expected = shapeMetadataJson(entry.id, entry.imageUri);
+    const expected = shapeMetadataJson(entry.id, entry.imageUri, svgUri);
     const encoded = Buffer.from(JSON.stringify(expected));
     const metadataCidMatch = Boolean(metadataCid && cidV1Raw(encoded) === metadataCid);
     const hostedMeta = metadataCid ? await pinataFile(metadataCid) : null;
     const fieldsValid = Boolean(
       expected.name === entry.name &&
         expected.image === entry.imageUri &&
-        expected.properties.files[0]?.uri === entry.imageUri &&
-        expected.properties.files[0]?.type === "image/svg+xml" &&
         attr(expected, "Series") === "Genesis 72" &&
         attr(expected, "Edition") === "1/1" &&
         attr(expected, "Shape") === padShapeId(entry.id),
@@ -102,6 +103,7 @@ async function main() {
       hostedMeta &&
         hostedMeta.cid === metadataCid &&
         /json/i.test(hostedMeta.mime_type || "") &&
+        Boolean(svgUri) &&
         (entry.id === 1 ? fieldsValid : metadataCidMatch && fieldsValid),
     );
 

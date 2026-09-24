@@ -10,12 +10,17 @@
     "collection:create": "tsx scripts/collection/create.ts",
     "collection:verify": "tsx scripts/collection/verify.ts",
     "shape01:verify": "tsx scripts/shape01/verify.ts",
+    "shape01:upload-marketplace-metadata": "tsx scripts/shape01/upload-marketplace-metadata.ts",
+    "shape01:update-marketplace-uri": "tsx scripts/shape01/update-marketplace-uri.ts",
     "shapes:generate-asset-keys": "tsx scripts/shapes/generate-asset-keys.ts",
     "shapes:verify-asset-keys": "tsx scripts/shapes/verify-asset-keys.ts",
     "shapes:upload-metadata": "tsx scripts/shapes/upload-metadata.ts",
     "shapes:verify-metadata": "tsx scripts/shapes/verify-metadata.ts",
     "shapes:verify-inventory": "tsx scripts/shapes/verify-inventory.ts",
-    "shapes:prove-exclusivity": "tsx scripts/shapes/prove-exclusivity.ts"
+    "shapes:prove-exclusivity": "tsx scripts/shapes/prove-exclusivity.ts",
+    "shapes:render-marketplace-pngs": "tsx scripts/shapes/render-marketplace-pngs.ts",
+    "shapes:upload-marketplace-metadata": "tsx scripts/shapes/upload-marketplace-metadata.ts",
+    "shapes:verify-marketplace-metadata": "tsx scripts/shapes/verify-marketplace-metadata.ts"
   },
   "dependencies": {
     "@metaplex-foundation/mpl-core": "^1.10.0",
@@ -31,6 +36,7 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

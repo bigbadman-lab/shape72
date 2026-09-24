@@ -1,7 +1,18 @@
 import { padShapeId, shapeDisplayName } from "./paths";
 
-export function shapeMetadataJson(id: number, imageUri: string) {
+export const MARKETPLACE_PNG_SIZE = 1200;
+export const MARKETPLACE_ORANGE = "#FF5C00";
+export const MARKETPLACE_BACKGROUND = "#080808";
+
+export function shapeMetadataJson(id: number, imageUri: string, svgUri?: string) {
   const padded = padShapeId(id);
+  const files = svgUri
+    ? [
+        { uri: imageUri, type: "image/png" },
+        { uri: svgUri, type: "image/svg+xml" },
+      ]
+    : [{ uri: imageUri, type: "image/svg+xml" }];
+
   return {
     name: shapeDisplayName(id),
     symbol: "SHAPE72",
@@ -13,12 +24,8 @@ export function shapeMetadataJson(id: number, imageUri: string) {
       { trait_type: "Series", value: "Genesis 72" },
     ],
     properties: {
-      files: [
-        {
-          uri: imageUri,
-          type: "image/svg+xml",
-        },
-      ],
+      category: "image",
+      files,
     },
   };
 }

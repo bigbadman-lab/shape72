@@ -2,7 +2,7 @@
   "name": "SHAPE 34",
   "symbol": "SHAPE72",
   "description": "Shape 34 of 72. A 1/1 Genesis Shape from SHAPE72.",
-  "image": "ipfs://bafkreicdrkyi4bhm3pm26c5t6yvznbcu4a45rgcjez4om7xfdzu35mpvoy",
+  "image": "ipfs://bafkreibkduxzrctwyxktjgj24axezbejahqmpaqdubpxfpbjlzbmd5ynbu",
   "attributes": [
     {
       "trait_type": "Shape",
@@ -18,7 +18,12 @@
     }
   ],
   "properties": {
+    "category": "image",
     "files": [
+      {
+        "uri": "ipfs://bafkreibkduxzrctwyxktjgj24axezbejahqmpaqdubpxfpbjlzbmd5ynbu",
+        "type": "image/png"
+      },
       {
         "uri": "ipfs://bafkreicdrkyi4bhm3pm26c5t6yvznbcu4a45rgcjez4om7xfdzu35mpvoy",
         "type": "image/svg+xml"

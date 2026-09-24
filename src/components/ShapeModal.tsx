@@ -8,6 +8,10 @@ import {
   TOTAL_SHAPES,
   type Shape,
 } from "@/data/shapes";
+import {
+  MAGIC_EDEN_COLLECTION_URL,
+  SECONDARY_MARKET_COPY,
+} from "@/data/marketplace";
 import type { ShapeClaimPhase } from "@/lib/shape-claim";
 
 interface ShapeModalProps {
@@ -184,6 +188,12 @@ export function ShapeModal({
             This Shape carries an equal share of creator rewards. Rewards belong
             to the Shape and transfer with the NFT.
           </p>
+          {rewardsActive && (
+            <p className="mt-3 font-display text-[9px] uppercase leading-relaxed tracking-[0.14em] text-muted-foreground">
+              {SECONDARY_MARKET_COPY}
+              {MAGIC_EDEN_COLLECTION_URL ? "" : " Collection page pending."}
+            </p>
+          )}
         </div>
 
         {shape.status === "available" && (
