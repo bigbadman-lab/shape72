@@ -13,17 +13,48 @@ import { ShapeGallery } from "@/components/ShapeGallery";
 import { ShapeModal } from "@/components/ShapeModal";
 import { TokenStrip } from "@/components/TokenStrip";
 import { WalletControl } from "@/components/WalletControl";
+import { claimShape01, type Shape01ClaimPhase } from "@/lib/shape01-claim";
+import { shortenAddress } from "@/lib/solana";
 
 export function HomePage() {
   const [shapes, setShapes] = useState<Shape[]>(SHAPES);
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const { isConnected, connect } = useWallet();
+  const [claimPhase, setClaimPhase] = useState<Shape01ClaimPhase>("idle");
+  const { isConnected, address, connect, wallet } = useWallet();
 
   const selected = shapes.find((s) => s.id === selectedId) ?? null;
 
   const claim = (id: number) => {
     if (!isConnected) {
       void connect();
+      return;
+    }
+    if (id === 1) {
+      if (!address || !wallet?.signTransaction) return;
+      void claimShape01({
+        claimant: address,
+        wallet,
+        onPhase: setClaimPhase,
+      })
+        .then(({ signature, assetAddress }) => {
+          console.info("SHAPE 01 minted", { signature, assetAddress });
+          setShapes((prev) =>
+            prev.map((s) =>
+              s.id === 1
+                ? {
+                    ...s,
+                    status: "yours" as const,
+                    owner: shortenAddress(address),
+                  }
+                : s,
+            ),
+          );
+          setClaimPhase("idle");
+          setSelectedId(null);
+        })
+        .catch(() => {
+          setClaimPhase("idle");
+        });
       return;
     }
     setShapes((prev) =>
@@ -85,6 +116,7 @@ export function HomePage() {
       <ShapeModal
         shape={selected}
         walletConnected
+        claimPhase={selected?.id === 1 ? claimPhase : "idle"}
         onClose={() => setSelectedId(null)}
         onClaim={claim}
         onClaimRewards={claimRewards}

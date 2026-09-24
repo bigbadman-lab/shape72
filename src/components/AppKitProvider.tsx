@@ -12,10 +12,12 @@ import {
 import {
   useAppKit,
   useAppKitAccount,
+  useAppKitProvider,
   useDisconnect,
 } from "@reown/appkit/react";
 import { initAppKit, isAppKitConfigured } from "@/lib/reown";
 import { isSolanaAddress, shortenAddress } from "@/lib/solana";
+import type { SolanaWalletSigner } from "@/lib/shape01-claim";
 
 export type WalletStatus =
   | "disconnected"
@@ -32,6 +34,7 @@ export interface WalletApi {
   status: WalletStatus;
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
+  wallet?: SolanaWalletSigner;
 }
 
 const unavailable: WalletApi = {
@@ -58,6 +61,7 @@ function LiveWalletBridge({ children }: { children: ReactNode }) {
   const { address, isConnected, status } = useAppKitAccount({
     namespace: "solana",
   });
+  const { walletProvider } = useAppKitProvider<SolanaWalletSigner>("solana");
   const { disconnect } = useDisconnect();
   const [notice, setNotice] = useState<string | null>(null);
 
@@ -100,8 +104,9 @@ function LiveWalletBridge({ children }: { children: ReactNode }) {
       status: walletStatus,
       connect,
       disconnect: handleDisconnect,
+      wallet: walletProvider,
     }),
-    [connected, validAddress, walletStatus, connect, handleDisconnect],
+    [connected, validAddress, walletStatus, connect, handleDisconnect, walletProvider],
   );
 
   return (

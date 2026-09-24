@@ -8,13 +8,22 @@ import {
   TOTAL_SHAPES,
   type Shape,
 } from "@/data/shapes";
+import type { Shape01ClaimPhase } from "@/lib/shape01-claim";
 
 interface ShapeModalProps {
   shape: Shape | null;
   walletConnected: boolean;
+  claimPhase?: Shape01ClaimPhase;
   onClose: () => void;
   onClaim: (id: number) => void;
   onClaimRewards: (id: number) => void;
+}
+
+function claimCopy(phase: Shape01ClaimPhase): string {
+  if (phase === "preparing") return "Preparing";
+  if (phase === "awaiting-signature") return "Awaiting signature";
+  if (phase === "confirming") return "Confirming";
+  return MINT_NOTE;
 }
 
 /**
@@ -24,6 +33,7 @@ interface ShapeModalProps {
 export function ShapeModal({
   shape,
   walletConnected,
+  claimPhase = "idle",
   onClose,
   onClaim,
   onClaimRewards,
@@ -120,7 +130,7 @@ export function ShapeModal({
               {MINT_LABEL}
             </div>
             <div className="mt-3 font-display text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              {MINT_NOTE}
+              {shape.id === 1 ? claimCopy(claimPhase) : MINT_NOTE}
             </div>
           </>
         ) : isYours ? (
@@ -177,8 +187,9 @@ export function ShapeModal({
         {shape.status === "available" && (
           <button
             type="button"
+            disabled={shape.id === 1 && claimPhase !== "idle"}
             onClick={() => onClaim(shape.id)}
-            className="mt-6 w-full rounded-full bg-primary py-4 font-display text-xs font-bold uppercase tracking-[0.25em] text-primary-foreground transition-colors duration-200 hover:bg-primary/90"
+            className="mt-6 w-full rounded-full bg-primary py-4 font-display text-xs font-bold uppercase tracking-[0.25em] text-primary-foreground transition-colors duration-200 hover:bg-primary/90 disabled:opacity-60"
           >
             Claim Shape
           </button>

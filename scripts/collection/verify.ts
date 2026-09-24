@@ -26,7 +26,11 @@ async function main() {
   const nameOk = collection.name === COLLECTION_NAME;
   const uriOk = expectedUri ? collection.uri === expectedUri : Boolean(collection.uri);
   const authorityOk = collection.updateAuthority.toString() === operator;
-  const unmintedOk = collection.numMinted === 0 && collection.currentSize === 0;
+  const recordedShape01 = optionalEnv("SHAPE72_SHAPE_01_ASSET_ADDRESS");
+  const expectedMinted = recordedShape01 ? 1 : 0;
+  const mintedCountOk =
+    collection.numMinted === expectedMinted &&
+    collection.currentSize === expectedMinted;
   const notImmutable = Boolean(collection.updateAuthority);
 
   const report = {
@@ -46,7 +50,7 @@ async function main() {
       metadataUriMatches: uriOk,
       updateAuthorityMatchesOperator: authorityOk,
       canAcceptAssets: notImmutable,
-      noShapeAssetsMinted: unmintedOk,
+      mintedCountMatchesCanary: mintedCountOk,
     },
   };
 
