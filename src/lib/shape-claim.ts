@@ -1,7 +1,7 @@
 import { Connection, VersionedTransaction } from "@solana/web3.js";
 import { getSolanaRpcUrl } from "@/lib/solana";
 
-export type Shape01ClaimPhase =
+export type ShapeClaimPhase =
   | "idle"
   | "preparing"
   | "awaiting-signature"
@@ -18,21 +18,22 @@ type PrepareResponse = {
   message?: string;
 };
 
-export async function claimShape01(options: {
+export async function claimShape(options: {
+  id: number;
   claimant: string;
   wallet: SolanaWalletSigner;
-  onPhase: (phase: Shape01ClaimPhase) => void;
+  onPhase: (phase: ShapeClaimPhase) => void;
 }): Promise<{ signature: string; assetAddress: string }> {
   options.onPhase("preparing");
 
-  const response = await fetch("/api/shapes/1/prepare-claim", {
+  const response = await fetch(`/api/shapes/${options.id}/prepare-claim`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ claimant: options.claimant }),
   });
   const body = (await response.json()) as PrepareResponse;
   if (!response.ok || !body.transaction || !body.assetAddress) {
-    throw new Error(body.message || body.error || "Shape 01 prepare failed");
+    throw new Error(body.message || body.error || "Shape prepare failed");
   }
 
   const bytes = Uint8Array.from(atob(body.transaction), (char) =>
@@ -50,7 +51,7 @@ export async function claimShape01(options: {
   });
   const confirmation = await connection.confirmTransaction(signature, "confirmed");
   if (confirmation.value.err) {
-    throw new Error("Shape 01 transaction failed to confirm");
+    throw new Error("Shape transaction failed to confirm");
   }
 
   return { signature, assetAddress: body.assetAddress };

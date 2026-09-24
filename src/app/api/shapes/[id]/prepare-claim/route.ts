@@ -1,21 +1,23 @@
 import { isSolanaAddress } from "@/lib/solana";
-import {
-  Shape01PrepareError,
-  prepareShape01Claim,
-} from "@/server/shape01";
+import { parseShapeId, prepareShapeClaim, ShapePrepareError } from "@/server/mint";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request,
+  context: { params: Promise<{ id: string }> },
+) {
   try {
+    const { id: rawId } = await context.params;
+    const id = parseShapeId(rawId);
     const body = (await request.json()) as { claimant?: unknown };
     const claimant = typeof body.claimant === "string" ? body.claimant.trim() : "";
     if (!isSolanaAddress(claimant)) {
       return Response.json({ error: "INVALID_CLAIMANT" }, { status: 400 });
     }
 
-    const prepared = await prepareShape01Claim(claimant);
+    const prepared = await prepareShapeClaim(id, claimant);
     return Response.json({
       transaction: prepared.transaction,
       assetAddress: prepared.assetAddress,
@@ -27,7 +29,7 @@ export async function POST(request: Request) {
       applicationSolTransfer: prepared.applicationSolTransfer,
     });
   } catch (error) {
-    if (error instanceof Shape01PrepareError) {
+    if (error instanceof ShapePrepareError) {
       return Response.json(
         { error: error.code, message: error.message },
         { status: error.status },

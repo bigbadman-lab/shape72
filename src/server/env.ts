@@ -12,6 +12,6 @@ export function requireServerEnv(name: string): string {
   return value;
 }
 
-export function isCanaryEnabled(): boolean {
-  return serverEnv("SHAPE72_CANARY_SHAPE01_ENABLED") === "true";
+export function isPublicMintEnabled(): boolean {
+  return serverEnv("SHAPE72_PUBLIC_MINT_ENABLED") === "true";
 }

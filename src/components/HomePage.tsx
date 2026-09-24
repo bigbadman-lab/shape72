@@ -1,70 +1,102 @@
 "use client";
 
-import { useState } from "react";
-import {
-  MOCK_WALLET,
-  SHAPES,
-  TOTAL_SHAPES,
-  type Shape,
-} from "@/data/shapes";
+import { useEffect, useState } from "react";
+import { SHAPES, TOTAL_SHAPES, type Shape, type ShapeStatus } from "@/data/shapes";
 import { useWallet } from "@/components/AppKitProvider";
 import { Shape72Wordmark } from "@/components/Shape72Wordmark";
 import { ShapeGallery } from "@/components/ShapeGallery";
 import { ShapeModal } from "@/components/ShapeModal";
 import { TokenStrip } from "@/components/TokenStrip";
 import { WalletControl } from "@/components/WalletControl";
-import { claimShape01, type Shape01ClaimPhase } from "@/lib/shape01-claim";
+import { claimShape, type ShapeClaimPhase } from "@/lib/shape-claim";
 import { shortenAddress } from "@/lib/solana";
+
+type StatusRow = {
+  id: number;
+  assetAddress: string;
+  status: "available" | "owned";
+  owner?: string;
+  ownerFull?: string;
+};
+
+function applyLiveStatus(
+  base: Shape[],
+  rows: StatusRow[],
+  connectedAddress?: string,
+): Shape[] {
+  const byId = new Map(rows.map((row) => [row.id, row]));
+  return base.map((shape) => {
+    const live = byId.get(shape.id);
+    if (!live || live.status === "available") {
+      return { ...shape, status: "available" as const, owner: undefined };
+    }
+    const yours = Boolean(
+      connectedAddress && live.ownerFull && live.ownerFull === connectedAddress,
+    );
+    const status: ShapeStatus = yours ? "yours" : "owned";
+    return {
+      ...shape,
+      status,
+      owner: live.owner || (live.ownerFull ? shortenAddress(live.ownerFull) : undefined),
+    };
+  });
+}
 
 export function HomePage() {
   const [shapes, setShapes] = useState<Shape[]>(SHAPES);
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [claimPhase, setClaimPhase] = useState<Shape01ClaimPhase>("idle");
+  const [claimPhase, setClaimPhase] = useState<ShapeClaimPhase>("idle");
+  const [mintEnabled, setMintEnabled] = useState(false);
   const { isConnected, address, connect, wallet } = useWallet();
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetch("/api/shapes/status")
+      .then((response) => response.json())
+      .then((payload: { mintEnabled?: boolean; shapes?: StatusRow[] }) => {
+        if (cancelled) return;
+        setMintEnabled(payload.mintEnabled === true);
+        if (Array.isArray(payload.shapes)) {
+          setShapes((prev) => applyLiveStatus(prev, payload.shapes || [], address));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setMintEnabled(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [address]);
 
   const selected = shapes.find((s) => s.id === selectedId) ?? null;
 
   const claim = (id: number) => {
+    if (!mintEnabled) return;
     if (!isConnected) {
       void connect();
       return;
     }
-    if (id === 1) {
-      if (!address || !wallet?.signTransaction) return;
-      void claimShape01({
-        claimant: address,
-        wallet,
-        onPhase: setClaimPhase,
+    if (!address || !wallet?.signTransaction) return;
+    void claimShape({
+      id,
+      claimant: address,
+      wallet,
+      onPhase: setClaimPhase,
+    })
+      .then(() => {
+        setShapes((prev) =>
+          prev.map((s) =>
+            s.id === id
+              ? { ...s, status: "yours" as const, owner: shortenAddress(address) }
+              : s,
+          ),
+        );
+        setClaimPhase("idle");
+        setSelectedId(null);
       })
-        .then(({ signature, assetAddress }) => {
-          console.info("SHAPE 01 minted", { signature, assetAddress });
-          setShapes((prev) =>
-            prev.map((s) =>
-              s.id === 1
-                ? {
-                    ...s,
-                    status: "yours" as const,
-                    owner: shortenAddress(address),
-                  }
-                : s,
-            ),
-          );
-          setClaimPhase("idle");
-          setSelectedId(null);
-        })
-        .catch(() => {
-          setClaimPhase("idle");
-        });
-      return;
-    }
-    setShapes((prev) =>
-      prev.map((s) =>
-        s.id === id
-          ? { ...s, status: "yours" as const, owner: MOCK_WALLET }
-          : s,
-      ),
-    );
-    setSelectedId(null);
+      .catch(() => {
+        setClaimPhase("idle");
+      });
   };
 
   const claimRewards = (id: number) => {
@@ -77,7 +109,6 @@ export function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-[1180px] px-6 sm:px-10">
-        {/* Top bar — minimal, no conventional navigation. */}
         <header className="flex items-center justify-between py-7">
           <span className="font-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
             One of one · Solana
@@ -85,7 +116,6 @@ export function HomePage() {
           <WalletControl />
         </header>
 
-        {/* Wordmark — custom vector lettering, spans the gallery width. */}
         <div className="pt-10 sm:pt-14">
           <h1 className="text-foreground">
             <span className="sr-only">SHAPE72</span>
@@ -102,7 +132,7 @@ export function HomePage() {
 
         <ShapeGallery
           shapes={shapes}
-          walletConnected
+          walletConnected={isConnected}
           onOpen={setSelectedId}
         />
 
@@ -115,8 +145,9 @@ export function HomePage() {
 
       <ShapeModal
         shape={selected}
-        walletConnected
-        claimPhase={selected?.id === 1 ? claimPhase : "idle"}
+        walletConnected={isConnected}
+        mintEnabled={mintEnabled}
+        claimPhase={claimPhase}
         onClose={() => setSelectedId(null)}
         onClaim={claim}
         onClaimRewards={claimRewards}

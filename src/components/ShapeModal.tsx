@@ -8,18 +8,19 @@ import {
   TOTAL_SHAPES,
   type Shape,
 } from "@/data/shapes";
-import type { Shape01ClaimPhase } from "@/lib/shape01-claim";
+import type { ShapeClaimPhase } from "@/lib/shape-claim";
 
 interface ShapeModalProps {
   shape: Shape | null;
   walletConnected: boolean;
-  claimPhase?: Shape01ClaimPhase;
+  mintEnabled?: boolean;
+  claimPhase?: ShapeClaimPhase;
   onClose: () => void;
   onClaim: (id: number) => void;
   onClaimRewards: (id: number) => void;
 }
 
-function claimCopy(phase: Shape01ClaimPhase): string {
+function claimCopy(phase: ShapeClaimPhase): string {
   if (phase === "preparing") return "Preparing";
   if (phase === "awaiting-signature") return "Awaiting signature";
   if (phase === "confirming") return "Confirming";
@@ -33,6 +34,7 @@ function claimCopy(phase: Shape01ClaimPhase): string {
 export function ShapeModal({
   shape,
   walletConnected,
+  mintEnabled = false,
   claimPhase = "idle",
   onClose,
   onClaim,
@@ -130,7 +132,7 @@ export function ShapeModal({
               {MINT_LABEL}
             </div>
             <div className="mt-3 font-display text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              {shape.id === 1 ? claimCopy(claimPhase) : MINT_NOTE}
+              {claimCopy(claimPhase)}
             </div>
           </>
         ) : isYours ? (
@@ -187,11 +189,11 @@ export function ShapeModal({
         {shape.status === "available" && (
           <button
             type="button"
-            disabled={shape.id === 1 && claimPhase !== "idle"}
+            disabled={!mintEnabled || claimPhase !== "idle"}
             onClick={() => onClaim(shape.id)}
             className="mt-6 w-full rounded-full bg-primary py-4 font-display text-xs font-bold uppercase tracking-[0.25em] text-primary-foreground transition-colors duration-200 hover:bg-primary/90 disabled:opacity-60"
           >
-            Claim Shape
+            {mintEnabled ? "Claim Shape" : "Mint not live"}
           </button>
         )}
 

@@ -1,0 +1,28 @@
+{
+  "name": "SHAPE 66",
+  "symbol": "SHAPE72",
+  "description": "Shape 66 of 72. A 1/1 Genesis Shape from SHAPE72.",
+  "image": "ipfs://bafkreidlvelvyzfm2afzs64r27t5pssdhny5wsq2sjrnobbo4k4qp7t5gq",
+  "attributes": [
+    {
+      "trait_type": "Shape",
+      "value": "66"
+    },
+    {
+      "trait_type": "Edition",
+      "value": "1/1"
+    },
+    {
+      "trait_type": "Series",
+      "value": "Genesis 72"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "ipfs://bafkreidlvelvyzfm2afzs64r27t5pssdhny5wsq2sjrnobbo4k4qp7t5gq",
+        "type": "image/svg+xml"
+      }
+    ]
+  }
+}

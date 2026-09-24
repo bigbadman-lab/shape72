@@ -17,7 +17,7 @@ import {
 } from "@reown/appkit/react";
 import { initAppKit, isAppKitConfigured } from "@/lib/reown";
 import { isSolanaAddress, shortenAddress } from "@/lib/solana";
-import type { SolanaWalletSigner } from "@/lib/shape01-claim";
+import type { SolanaWalletSigner } from "@/lib/shape-claim";
 
 export type WalletStatus =
   | "disconnected"

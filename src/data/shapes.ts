@@ -22,9 +22,6 @@ export interface Shape {
   rewardsAvailable: number;
 }
 
-/** Mocked connected wallet for the prototype. */
-export const MOCK_WALLET = "7DS...82G";
-
 /** Mint price in SOL. The initial mint is free — network fees only. */
 export const PRICE_SOL = 0;
 
@@ -34,46 +31,7 @@ export const MINT_NOTE = "Network fees only";
 
 export const TOTAL_SHAPES = 72;
 
-/**
- * Mocked ownership ledger. Shape numbers are permanent and must not be
- * reshuffled — these entries only demonstrate the three states.
- */
-const OWNED_BY: Record<number, string> = {
-  3: "4nD...9kQ",
-  12: "9xL...mP2",
-  31: "Fg8...TtR",
-  45: "Bq6...wZz",
-  61: "Hn2...Kd7",
-};
-
-const YOURS: number[] = [17, 24, 58];
-
-const REWARDS_SOL: Record<number, number> = {
-  17: 0.031,
-  24: 0.042,
-};
-
 function buildShape(id: number): Shape {
-  if (YOURS.includes(id)) {
-    return {
-      id,
-      image: `/shapes/shape-${id}.svg`,
-      status: "yours",
-      owner: MOCK_WALLET,
-      price: PRICE_SOL,
-      rewardsAvailable: REWARDS_SOL[id] ?? 0,
-    };
-  }
-  if (OWNED_BY[id]) {
-    return {
-      id,
-      image: `/shapes/shape-${id}.svg`,
-      status: "owned",
-      owner: OWNED_BY[id],
-      price: PRICE_SOL,
-      rewardsAvailable: 0,
-    };
-  }
   return {
     id,
     image: `/shapes/shape-${id}.svg`,
@@ -83,6 +41,7 @@ function buildShape(id: number): Shape {
   };
 }
 
+/** Local artwork placeholders. Live AVAILABLE/OWNED/YOURS comes from chain status. */
 export const SHAPES: Shape[] = Array.from({ length: TOTAL_SHAPES }, (_, i) =>
   buildShape(i + 1),
 );
