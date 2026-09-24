@@ -46,20 +46,6 @@ export const SHAPES: Shape[] = Array.from({ length: TOTAL_SHAPES }, (_, i) =>
   buildShape(i + 1),
 );
 
-/**
- * Native-token treatment. Flip `launched` to false to preview the
- * pre-launch state ("NOT LIVE YET"). Later the mint address arrives via
- * the project's own CLI/configuration process.
- */
-export const CORE_TOKEN = {
-  launched: true,
-  symbol: "$SHAPE72",
-  marketCap: "$842K",
-  volume24h: "$1.8M",
-  creatorRewards: "18.42 SOL",
-  shapePool: "9.21 SOL",
-} as const;
-
 export function padShapeId(id: number): string {
   return String(id).padStart(2, "0");
 }

@@ -7,6 +7,7 @@ import { Shape72Wordmark } from "@/components/Shape72Wordmark";
 import { ShapeGallery } from "@/components/ShapeGallery";
 import { ShapeModal } from "@/components/ShapeModal";
 import { SecondaryMarketStrip } from "@/components/SecondaryMarketStrip";
+import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { TokenStrip } from "@/components/TokenStrip";
 import { WalletControl } from "@/components/WalletControl";
 import { claimShape, type ShapeClaimPhase } from "@/lib/shape-claim";
@@ -109,6 +110,7 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <AnnouncementBar />
       <div className="mx-auto max-w-[1180px] px-6 sm:px-10">
         <header className="flex items-center justify-between py-7">
           <span className="font-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
