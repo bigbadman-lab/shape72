@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Courier_Prime } from "next/font/google";
+import { Instrument_Sans } from "next/font/google";
 import { AppKitProvider } from "@/components/AppKitProvider";
 import "./globals.css";
 
-const courierPrime = Courier_Prime({
+const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-courier-prime",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-instrument-sans",
   display: "swap",
 });
 
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${courierPrime.variable} h-full`}>
+    <html lang="en" className={`${instrumentSans.variable} h-full`}>
       <body className="min-h-full font-display">
         <AppKitProvider>{children}</AppKitProvider>
       </body>
